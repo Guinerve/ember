@@ -57,7 +57,7 @@ The L/B ratio `1 + 0.125·U` is a simple placeholder, not a published forest rel
 
 ## Browser check
 
-Checked in real Chrome (headless, driven with puppeteer) on 2026-10-12: terrain, wind arrow and FFDI card render; Play advances ~40 simulated minutes per second; ignitions burn out as wind-driven ellipses elongated toward the south-east. Not checked: touch input and phone layout.
+Checked in real Chrome (headless, driven with puppeteer) on 2026-10-12: terrain, wind arrow and FFDI card render; Play advances ~40 simulated minutes per second; ignitions burn out as wind-driven ellipses elongated toward the south-east. Also checked on a 390 px touch viewport: no horizontal overflow, tap on the map ignites a fire, and dragging the time slider works.
 
 ## Next (tomorrow)
 
