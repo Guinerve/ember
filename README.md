@@ -4,6 +4,8 @@
 
 **Status:** v0.1 core built; model verified; UI checked in real Chrome
 
+![ember demo](assets/demo.gif)
+
 ![ember screenshot](assets/screenshot.png)
 
 ## The idea
@@ -68,7 +70,7 @@ Overlay a historical fire perimeter for a qualitative comparison.
 
 ## Definition of done
 
-- [x] Hero GIF or screenshot at the top of this README (static screenshot; no GIF yet)
+- [x] Hero GIF or screenshot at the top of this README
 - [x] Live demo link or one-command run (`npm install && npm run dev`)
 - [ ] "How I know it's right" section filled in with real results
 - [ ] Tests passing in CI, badge added
