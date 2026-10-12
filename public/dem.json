@@ -1,0 +1,12 @@
+{
+  "width": 384,
+  "height": 384,
+  "cellSizeM": 62.12,
+  "north": -35.24561909420682,
+  "south": -35.4606699514953,
+  "west": 148.7109375,
+  "east": 148.974609375,
+  "minElevation": 439.25,
+  "maxElevation": 1600.25,
+  "source": "AWS Terrain Tiles (Terrarium), zoom 12, downsampled x2"
+}

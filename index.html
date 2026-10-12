@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ember</title>
+  <meta name="description" content="Bushfire spread on real Canberra terrain, in the browser. McArthur Mk5 forest fire danger, slope and wind." />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Ember</h1>
+    <p>Bushfire spread on real terrain west of Canberra (the Brindabellas). Click the map to ignite, set the weather, and play the fire forward.</p>
+  </header>
+  <main>
+    <section class="map">
+      <canvas id="map" width="384" height="384" role="img" aria-label="Fire map"></canvas>
+      <div class="timebar"><label>Ignite at x <input id="ix" type="number" min="0" max="383" value="190" style="width:5em"></label> <label>y <input id="iy" type="number" min="0" max="383" value="190" style="width:5em"></label> <button id="ignite-btn">Ignite</button></div>
+      <div class="timebar">
+        <button id="play">▶ Play</button>
+        <input id="time" type="range" min="0" max="360" step="1" value="0" aria-label="Elapsed time" />
+        <output id="timeOut">0 h 00 min</output>
+      </div>
+      <div class="stats" id="stats"></div>
+    </section>
+    <section class="panel">
+      <div class="ffdi" id="ffdi"></div>
+      <label class="ctl"><span>Temperature <output data-for="temp"></output></span><input id="temp" type="range" min="10" max="47" step="1" value="36" /></label>
+      <label class="ctl"><span>Relative humidity <output data-for="humidity"></output></span><input id="humidity" type="range" min="5" max="90" step="1" value="15" /></label>
+      <label class="ctl"><span>Wind speed <output data-for="wind"></output></span><input id="wind" type="range" min="0" max="80" step="1" value="35" /></label>
+      <label class="ctl"><span>Wind from <output data-for="windFrom"></output></span><input id="windFrom" type="range" min="0" max="359" step="1" value="315" /></label>
+      <label class="ctl"><span>Drought factor <output data-for="drought"></output></span><input id="drought" type="range" min="0" max="10" step="0.5" value="9" /></label>
+      <label class="ctl"><span>Fuel load <output data-for="fuel"></output></span><input id="fuel" type="range" min="4" max="30" step="1" value="12" /></label>
+      <div class="presets"><button id="clear">Clear ignitions</button></div>
+      <p class="hint">Hillshade from a ~62 m terrain grid. Wind arrow shows where the fire is pushed.</p>
+    </section>
+  </main>
+  <footer><p><b>Educational model, not an operational prediction tool.</b> No spotting, no fuel-moisture dynamics, no suppression, uniform fuel. Terrain: AWS Terrain Tiles (SRTM-derived), not yet a Geoscience Australia ELVIS tile.</p></footer>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
