@@ -2,7 +2,9 @@
 
 > Bushfire spread on real Canberra terrain, in the browser.
 
-**Status:** v0.1 core built (model verified; UI not yet visually checked in a browser) · Portfolio project #10 · see `../README.md`
+**Status:** v0.1 core built; model verified; UI checked in real Chrome
+
+![ember screenshot](assets/screenshot.png)
 
 ## The idea
 
@@ -51,9 +53,12 @@ The L/B ratio `1 + 0.125·U` is a simple placeholder, not a published forest rel
 
 **Educational model, not an operational prediction tool.** No spotting, fuel moisture dynamics or suppression.
 
+## Browser check
+
+Checked in real Chrome (headless, driven with puppeteer) on 2026-10-12: terrain, wind arrow and FFDI card render; Play advances ~40 simulated minutes per second; ignitions burn out as wind-driven ellipses elongated toward the south-east. Not checked: touch input and phone layout.
+
 ## Next (tomorrow)
 
-- Look at it in a browser. The canvas hillshade and fire colours are untested by eye.
 - Replace the placeholder L/B relationship; add published FFDI table values to the tests.
 - ELVIS tile in place of the SRTM-derived one.
 
@@ -63,7 +68,7 @@ Overlay a historical fire perimeter for a qualitative comparison.
 
 ## Definition of done
 
-- [ ] Hero GIF or screenshot at the top of this README
+- [x] Hero GIF or screenshot at the top of this README (static screenshot; no GIF yet)
 - [x] Live demo link or one-command run (`npm install && npm run dev`)
 - [ ] "How I know it's right" section filled in with real results
 - [ ] Tests passing in CI, badge added
