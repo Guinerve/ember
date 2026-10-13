@@ -21,7 +21,7 @@ export function ffdiCategory(v: number): string {
   if (v >= 50) return "Severe";
   if (v >= 25) return "Very high";
   if (v >= 12) return "High";
-  return "Low–moderate";
+  return "Low to moderate";
 }
 
 /** Mk5 forest head-fire rate of spread on flat ground, km/h: R = 0.0012 · FFDI · w (w = fuel load, t/ha). */

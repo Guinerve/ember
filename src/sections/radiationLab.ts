@@ -67,7 +67,7 @@ export function initRadiationLab(): void {
     { id: "r-temp", label: "Flame temperature", min: 800, max: 1500, step: 10, value: 1090, format: (v) => `${v} K (${Math.round(v - 273.15)} °C)` },
     { id: "r-eps", label: "Flame emissivity ε", min: 0.2, max: 1, step: 0.01, value: 0.95, format: (v) => v.toFixed(2) },
     { id: "r-len", label: "Flame length", min: 1, max: 30, step: 0.5, value: 9, format: (v) => `${v} m` },
-    { id: "r-wid", label: "Fire-line width", min: 4, max: 120, step: 1, value: 24, format: (v) => `${v} m` },
+    { id: "r-wid", label: "Width of fire line", min: 4, max: 120, step: 1, value: 24, format: (v) => `${v} m` },
     { id: "r-tilt", label: "Flame lean from vertical", min: 0, max: 70, step: 1, value: 25, format: (v) => `${v}°` },
     { id: "r-dist", label: "Leaf distance ahead", min: 0.5, max: 40, step: 0.5, value: 8, format: (v) => `${v} m` },
     { id: "r-h", label: "Leaf height", min: 0, max: 6, step: 0.1, value: 0.3, format: (v) => `${v.toFixed(1)} m` },
@@ -77,7 +77,7 @@ export function initRadiationLab(): void {
   let mode: "glow" | "contrib" = "glow";
   segmented($("#rad-viewport .seg"), "mode", (v) => { mode = v as typeof mode; schedule(); });
 
-  equation($("#eq-sb"), "Stefan–Boltzmann law: power radiated per square metre of flame", String.raw`E = \varepsilon\,\sigma\,T^4`);
+  equation($("#eq-sb"), "Stefan-Boltzmann law: power that each square metre of flame radiates", String.raw`E = \varepsilon\,\sigma\,T^4`);
   equation($("#eq-vf"), "View factor from the flame to the leaf", String.raw`F = \int_{\text{flame}} \frac{\cos\theta_1\,\cos\theta_2}{\pi\,r^2}\,dA_1`);
   equation($("#eq-flux"), "Radiant flux arriving at the leaf", String.raw`q = \varepsilon\,\sigma\,T^4 \, F`);
 
@@ -346,9 +346,9 @@ export function initRadiationLab(): void {
 
   function bandName(q: number): string {
     if (q < 12.5) return "below 12.5 kW/m²";
-    if (q < 19) return "12.5–19 kW/m²";
-    if (q < 29) return "19–29 kW/m²";
-    if (q < 40) return "29–40 kW/m²";
+    if (q < 19) return "12.5 to 19 kW/m²";
+    if (q < 29) return "19 to 29 kW/m²";
+    if (q < 40) return "29 to 40 kW/m²";
     return "above 40 kW/m²";
   }
 

@@ -18,7 +18,7 @@ describe("McArthur Mk5 FFDI", () => {
     expect(ffdi({ ...base, humidity: 40 })).toBeLessThan(f0);
   });
   it("categories follow the 2010 rating bands", () => {
-    expect(ffdiCategory(5)).toBe("Low–moderate");
+    expect(ffdiCategory(5)).toBe("Low to moderate");
     expect(ffdiCategory(30)).toBe("Very high");
     expect(ffdiCategory(60)).toBe("Severe");
     expect(ffdiCategory(80)).toBe("Extreme");

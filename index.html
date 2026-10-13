@@ -5,7 +5,7 @@
   <link rel="icon" href="data:," />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Ember: bushfire physics</title>
-  <meta name="description" content="An explorable model of how bushfires spread: Stefan–Boltzmann radiation, view factors and angles, pyrolysis, an energy-balance spread rate, and McArthur Mk5 spread on real Brindabella terrain. Educational only." />
+  <meta name="description" content="An interactive model of how bushfires spread. It covers flame radiation, view factors, pyrolysis and an energy balance for the spread rate, then runs McArthur Mk5 on real Brindabella terrain. For teaching only." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" />
@@ -41,7 +41,7 @@
           <span class="chapter-no" aria-hidden="true">1</span>
           <div>
             <h1 id="h-radiation">How a fire heats fuel it hasn’t touched yet</h1>
-            <p class="lede">A flame front is a hot, glowing surface. Everything in front of it receives radiant heat, and how much depends on two things: how hot the flame is, raised to the fourth power, and the angles at which the flame and the fuel face each other.</p>
+            <p class="lede">A flame front is a hot, glowing surface. All the fuel in front of it receives radiant heat. The amount depends on two things: the flame temperature to the fourth power, and the angles between the flame and the fuel.</p>
           </div>
         </div>
 
@@ -56,7 +56,7 @@
                 <button type="button" role="radio" aria-checked="false" data-mode="contrib">Heat reaching the leaf</button>
               </div>
             </div>
-            <figcaption>Drag to orbit, scroll or pinch to zoom, click the ground to move the leaf. The ground is coloured by radiant flux on a surface facing like the leaf.</figcaption>
+            <figcaption>Drag to turn the view. Scroll or pinch to zoom. Click the ground to move the leaf. The ground colour shows the radiant flux on a surface that faces the same way as the leaf.</figcaption>
           </figure>
 
           <aside class="readout-panel">
@@ -68,17 +68,17 @@
 
         <div class="prose-grid">
           <div class="prose">
-            <h2>Stefan–Boltzmann: why temperature dominates</h2>
-            <p>Every surface radiates. A perfect emitter at absolute temperature <var>T</var> gives off <var>σT⁴</var> watts per square metre. Real flames are slightly less efficient, so the emitted power carries an emissivity <var>ε</var> between 0 and 1. The fourth power is the striking part: a flame at 1,200 K radiates about 47% more than one at 1,090 K, though it is only 10% hotter.</p>
-            <p>The flame colour on this page is computed from Planck’s law for the temperature you set, so it shows the temperature in the colour that temperature really produces. Most of the energy is invisible: a 1,090 K flame emits most strongly near <span id="wien-out">2.7 µm</span>, in the infrared.</p>
-            <h2>The view factor: angles, not just distance</h2>
-            <p>Only part of what the flame emits lands on any one leaf. The fraction is the view factor <var>F</var>, which adds up every small piece of flame weighted by two cosines. <var>θ₁</var> is how far the ray leaves the flame’s face from square-on, and <var>θ₂</var> is how far it meets the leaf from square-on. Then divide by <var>πr²</var>.</p>
-            <p>Lean the flame forward and watch the ground under it brighten. Wind does this to real fires: the flame tilts over unburnt fuel, both cosines grow, distances shrink, and the fuel ahead receives far more heat. Turn the leaf from facing the sky to facing the fire and its flux changes too, though nothing else has moved.</p>
+            <h2>Stefan-Boltzmann law: why temperature has the largest effect</h2>
+            <p>Every surface radiates heat. A perfect emitter at absolute temperature <var>T</var> gives off <var>σT⁴</var> watts per square metre. A real flame emits less than this, so the equation includes an emissivity <var>ε</var> between 0 and 1. The fourth power is the important part. A flame at 1,200 K is only 10% hotter than one at 1,090 K, but it radiates about 47% more.</p>
+            <p>The page calculates the flame colour from Planck’s law for the temperature you set. So the colour is the one that this temperature really produces. Most of the energy is invisible. A 1,090 K flame emits most strongly near <span id="wien-out">2.7 µm</span>, in the infrared.</p>
+            <h2>The view factor: angles and distance</h2>
+            <p>Only part of the flame’s radiation lands on one leaf. This fraction is the view factor <var>F</var>. It adds up each small piece of the flame, multiplied by two cosines and divided by <var>πr²</var>. <var>θ₁</var> is the angle between the ray and the normal to the flame. <var>θ₂</var> is the angle between the ray and the normal to the leaf.</p>
+            <p>Lean the flame forward and watch the ground below it get brighter. Wind does this to real fires. The flame tilts over the unburnt fuel, so both cosines increase and the distances decrease. The fuel ahead then receives much more heat. Turn the leaf from the sky to the fire. Its flux changes, but nothing else has moved.</p>
           </div>
           <div class="margin-eqs">
             <div class="equation" id="eq-vf"></div>
             <div class="equation" id="eq-flux"></div>
-            <p class="note">Flames are modelled as flat rectangular radiating panels, the idealisation used by AS 3959 for building in bushfire-prone areas. That standard assumes a 1,090 K flame. Its bushfire attack levels are radiant-flux bands at 12.5, 19, 29 and 40 kW/m². No atmospheric absorption is included, so fluxes far from the flame are slightly high.</p>
+            <p class="note">The model treats each flame as a flat rectangular panel that radiates. AS 3959, the Australian standard for buildings in bushfire areas, uses the same simplification. That standard assumes a 1,090 K flame. Its bushfire attack levels are bands of radiant flux at 12.5, 19, 29 and 40 kW/m². The model ignores absorption by the air, so fluxes far from the flame are slightly high.</p>
           </div>
         </div>
       </div>
@@ -91,29 +91,29 @@
           <span class="chapter-no" aria-hidden="true">2</span>
           <div>
             <h2 id="h-paths" class="chapter-title">Radiation, convection, conduction</h2>
-            <p class="lede">Heat reaches unburnt fuel three ways. They act at very different ranges, and which one matters depends on how far ahead of the flame you look.</p>
+            <p class="lede">Heat gets to unburnt fuel in three ways. Each one acts over a very different distance. Which one matters depends on how far ahead of the flame you look.</p>
           </div>
         </div>
         <div class="two-charts">
           <figure class="chart-card">
-            <figcaption><b>Heating available to cold fuel, by distance ahead of the fire line</b><span>Same flame as section 1, fuel at ground level facing like the leaf. Both axes logarithmic.</span></figcaption>
+            <figcaption><b>Heating available to cold fuel, by distance ahead of the fire line</b><span>Same flame as section 1. The fuel is at ground level and faces the same way as the leaf. Both axes are logarithmic.</span></figcaption>
             <div class="chart" id="paths-chart"></div>
           </figure>
           <figure class="chart-card">
-            <figcaption><b>Radiation against convection as a surface heats up</b><span>Heat a surface at <var>T</var> loses to 30 °C surroundings: radiation εσ(T⁴ − Tₐ⁴) against convection h(T − Tₐ).</span></figcaption>
+            <figcaption><b>Radiation against convection as a surface heats up</b><span>Heat that a surface at <var>T</var> loses to 30 °C surroundings: radiation εσ(T⁴ − Tₐ⁴) compared with convection h(T − Tₐ).</span></figcaption>
             <div class="chart" id="t4-chart"></div>
           </figure>
         </div>
         <div class="prose-grid">
           <div class="prose">
-            <p><b>Radiation</b> travels at the speed of light, needs no contact, and is the only path that reaches metres ahead. It preheats and dries fuel long before the flame arrives.</p>
-            <p><b>Convection</b> is heat carried by moving hot gas. It needs contact. Upright flames send their hot gas upward and away from the fuel ahead, but wind leans them over the fuel, and then flame gas washes directly over it. The right-hand chart shows why radiation wins at flame temperatures: it grows as <var>T⁴</var>, convection only as <var>T</var>.</p>
-            <p><b>Conduction</b> through a porous litter bed is real but slow. Ahead of a moving front its warm zone is a fraction of a millimetre long, so it barely registers.</p>
+            <p><b>Radiation</b> travels at the speed of light and needs no contact. It is the only path that reaches metres ahead. It preheats and dries the fuel long before the flame arrives.</p>
+            <p><b>Convection</b> is heat that moving hot gas carries. It needs contact. An upright flame sends its hot gas up and away from the fuel ahead. Wind leans the flame over the fuel, and then the hot gas flows directly over it. The second chart shows why radiation is larger at flame temperatures. It grows as <var>T⁴</var>, but convection grows only as <var>T</var>.</p>
+            <p><b>Conduction</b> through a loose bed of litter is real but slow. Ahead of a moving front, its warm zone is less than a millimetre long. So it has almost no effect.</p>
           </div>
           <div class="margin-eqs">
             <div class="equation" id="eq-conv"></div>
             <div class="equation" id="eq-cond"></div>
-            <p class="note">There is an honest twist. Fine particles such as leaves and grass shed heat to the air so efficiently that radiation alone often cannot ignite them. Laboratory work by Finney et al. (2015, <i>PNAS</i>) found that ignition of fine fuels comes from direct flame contact, with radiation doing the preheating. Section 3 lets you test this.</p>
+            <p class="note">There is a complication. Fine particles such as leaves and grass lose heat to the air very quickly. So radiation alone often cannot ignite them. Laboratory work by Finney et al. (2015, <i>PNAS</i>) found that fine fuels ignite from direct flame contact. Radiation only preheats them. You can test this in section 3.</p>
           </div>
         </div>
       </div>
@@ -126,7 +126,7 @@
           <span class="chapter-no" aria-hidden="true">3</span>
           <div>
             <h2 id="h-pyro" class="chapter-title">Heating, drying, pyrolysis, ignition</h2>
-            <p class="lede">Solid fuel does not burn. Heat breaks it down into flammable gas, and the gas burns. Follow one leaf as it is heated: it warms, stalls at 100 °C while its water boils off, then decomposes, and catches when the gas leaves its surface fast enough to sustain a flame.</p>
+            <p class="lede">Solid fuel does not burn. Heat breaks it down into flammable gas, and the gas burns. Follow one leaf as it heats. It gets warmer, then stays at 100 °C while its water boils off. Next it decomposes. It catches fire when gas leaves its surface fast enough to keep a flame alight.</p>
           </div>
         </div>
         <div class="lab lab-flip">
@@ -136,7 +136,7 @@
               <div class="chart" id="pyro-temp"></div>
             </figure>
             <figure class="chart-card">
-              <figcaption><b>Remaining dry mass and flammable-gas flux</b><span>Ignition when the gas flux reaches the critical value (dashed).</span></figcaption>
+              <figcaption><b>Remaining dry mass and flux of flammable gas</b><span>The leaf ignites when the gas flux reaches the critical value (dashed line).</span></figcaption>
               <div class="two-small">
                 <div class="chart" id="pyro-mass"></div>
                 <div class="chart" id="pyro-flux"></div>
@@ -152,14 +152,14 @@
         <div class="prose-grid">
           <div class="prose">
             <h2>An energy balance for one leaf</h2>
-            <p>A leaf a third of a millimetre thick is thin enough that its temperature is the same all the way through. Its temperature then follows from bookkeeping. Absorbed radiation and any heat from hot gas come in; re-radiation and cooling by the air go out. What is left over raises the temperature, or boils water while there is any.</p>
-            <p>Pyrolysis follows the Arrhenius law. The rate climbs steeply with temperature: near 600 K, a 50 K rise multiplies it about forty times. That steepness is why ignition looks like a threshold.</p>
+            <p>A leaf 0.3 mm thick is thin enough to have the same temperature all the way through. So its temperature comes from simple accounting. Absorbed radiation and any heat from hot gas come in. Radiation from the leaf and cooling by the air go out. The remainder raises the temperature, or boils water while some is left.</p>
+            <p>Pyrolysis follows the Arrhenius law. The rate increases very quickly with temperature. Near 600 K, a 50 K rise multiplies it by about 40. This is why ignition looks like a threshold.</p>
           </div>
           <div class="margin-eqs">
             <div class="equation" id="eq-leaf"></div>
             <div class="equation" id="eq-arr"></div>
             <figure class="chart-card compact">
-              <figcaption><b>Cellulose mass-loss rate in a 10 K/min heating test</b><span>The kinetics behind the leaf model</span></figcaption>
+              <figcaption><b>Rate of mass loss of cellulose in a 10 K/min heating test</b><span>The kinetics behind the leaf model</span></figcaption>
               <div class="chart" id="tga-chart"></div>
             </figure>
           </div>
@@ -174,13 +174,13 @@
           <span class="chapter-no" aria-hidden="true">4</span>
           <div>
             <h2 id="h-spread" class="chapter-title">From radiant heat to a rate of spread</h2>
-            <p class="lede">Put the pieces together. A fire front moving at speed <var>R</var> must heat every kilogram of fuel ahead of it to ignition, and here the flame’s radiation is the only thing paying. Conservation of energy then fixes <var>R</var>.</p>
+            <p class="lede">Now put the parts together. A fire front that moves at speed <var>R</var> must heat each kilogram of fuel ahead of it to ignition. Here, the flame’s radiation is the only heat source. Conservation of energy then sets <var>R</var>.</p>
           </div>
         </div>
         <div class="lab">
           <figure class="viewport side">
             <canvas id="spread-canvas" role="img" aria-label="Side view of a flame front over a fuel bed, coloured by preheating temperature"></canvas>
-            <figcaption>Side view on the fire’s axis. The bed ahead is coloured by its steady preheating temperature; rays show the angles at which flame radiation strikes it.</figcaption>
+            <figcaption>Side view along the axis of the fire. The colour of the fuel bed ahead shows its steady preheating temperature. The rays show the angles at which radiation from the flame hits it.</figcaption>
           </figure>
           <aside class="readout-panel">
             <div class="result-figure" id="spread-result"></div>
@@ -191,9 +191,9 @@
         <div class="prose-grid">
           <div class="prose">
             <h2>The energy balance</h2>
-            <p>Each square metre of ground holds <var>w</var> kg of fine fuel, and each kilogram needs <var>Q</var><sub>ig</sub> joules to dry it and bring it to ignition. A front advancing at <var>R</var> consumes <var>R·w</var> kg per second per metre of fire line, so it needs <var>R·w·Q</var><sub>ig</sub> watts. The radiant power the flame puts into the bed ahead, minus what the warming bed re-radiates and loses to the air, must supply exactly that.</p>
-            <p>With <em>Flame sized by the fire</em> switched on, flame length is no longer your input. A faster fire releases more energy and so grows a longer flame (Byram’s correlation), which radiates more and drives faster spread. The model iterates that loop to its fixed point.</p>
-            <p>Notice how weakly this rate responds to wind. Wind leans the flame and the radiation rises, but real wind-driven fires speed up far more. The missing physics is flame contact, turbulent gusts pushing flame into the fuel, and embers. Section 6 measures the gap against a real fire.</p>
+            <p>Each square metre of ground holds <var>w</var> kg of fine fuel. Each kilogram needs <var>Q</var><sub>ig</sub> joules to dry it and bring it to ignition. A front that moves at <var>R</var> uses <var>R·w</var> kg of fuel per second for each metre of fire line. So it needs <var>R·w·Q</var><sub>ig</sub> watts. The flame puts radiant power into the bed ahead, and the warm bed loses some of it again by radiation and to the air. What remains must supply exactly <var>R·w·Q</var><sub>ig</sub>.</p>
+            <p>Turn on <em>Flame sized by the fire</em> and the flame length is no longer an input. A faster fire releases more energy and so makes a longer flame (Byram’s correlation). The longer flame radiates more and pushes the fire faster. The model repeats this loop until it reaches a fixed point.</p>
+            <p>This rate changes only a little with wind. Wind leans the flame and the radiation increases. But real fires in strong wind speed up much more. The model leaves out flame contact, gusts that push flame into the fuel, and embers. Section 6 measures this gap against a real fire.</p>
           </div>
           <div class="margin-eqs">
             <div class="equation" id="eq-balance"></div>
@@ -211,7 +211,7 @@
           <span class="chapter-no" aria-hidden="true">5</span>
           <div>
             <h2 id="h-land" class="chapter-title">Spread across the Brindabellas</h2>
-            <p class="lede">Operational models skip the physics and use relationships fitted to observed fires. This one runs McArthur’s Mk5 forest model over real terrain west of Canberra. Click the map to light a fire, set the weather, and play it forward.</p>
+            <p class="lede">Operational models do not calculate the physics. They use relations fitted to observed fires. This section runs McArthur’s Mk5 forest model over real terrain west of Canberra. Click the map to light a fire. Then set the weather and press Play.</p>
           </div>
         </div>
         <div class="land-grid">
@@ -260,14 +260,14 @@
         <div class="prose-grid">
           <div class="prose">
             <h2>How the map model works</h2>
-            <p>Each cell’s arrival time is the quickest path from an ignition, where each step takes distance divided by the local rate of spread. That rate is McArthur’s Mk5 head-fire rate <var>R</var> = 0.0012 · FFDI · <var>w</var>, corrected for slope (doubling per 10° uphill) and shaped by an ellipse around the wind direction.</p>
-            <p>The ellipse’s length-to-breadth ratio now comes from a published relationship instead of a placeholder: Equation 79 of the Canadian Fire Behavior Prediction System, fitted to Alexander’s (1985) observations of forest fire shapes. CSIRO’s Spark framework points to the same source. At 46 km/h it gives 5.7. The Kilmore East fire was mapped at about 5 in that wind.</p>
+            <p>The fire reaches each cell along the quickest path from an ignition. Each step takes its distance divided by the local rate of spread. That rate starts from McArthur’s Mk5 rate for the head fire, <var>R</var> = 0.0012 · FFDI · <var>w</var>. A slope correction doubles it for each 10° uphill. An ellipse around the wind direction sets the rate in the other directions.</p>
+            <p>The ratio of length to breadth of the ellipse comes from Equation 79 of the Canadian Fire Behavior Prediction System. That equation is fitted to Alexander’s (1985) observations of the shapes of forest fires. CSIRO’s Spark framework uses the same source. At 46 km/h it gives 5.7. Maps of the Kilmore East fire show about 5 in that wind.</p>
           </div>
           <div class="margin-eqs">
             <div class="equation" id="eq-ffdi"></div>
             <div class="equation" id="eq-lb"></div>
             <figure class="chart-card compact">
-              <figcaption><b>Length-to-breadth ratio against wind</b><span>Published relationship and the old placeholder</span></figcaption>
+              <figcaption><b>Ratio of length to breadth against wind speed</b><span>Published relation and a simple linear rule for comparison</span></figcaption>
               <div class="chart" id="lb-chart"></div>
             </figure>
           </div>
@@ -282,12 +282,12 @@
           <span class="chapter-no" aria-hidden="true">6</span>
           <div>
             <h2 id="h-ref" class="chapter-title">Checked against a real fire</h2>
-            <p class="lede">The Black Saturday Kilmore East fire of 7 February 2009 was reconstructed hour by hour by CSIRO researchers (Cruz et al. 2012). Their published weather, fuel loads and measured spread rates make it a demanding test for any model.</p>
+            <p class="lede">CSIRO researchers rebuilt the Black Saturday Kilmore East fire of 7 February 2009 hour by hour (Cruz et al. 2012). They published the weather, fuel loads and measured spread rates. This makes the fire a hard test for any model.</p>
           </div>
         </div>
         <div class="ref-grid">
           <figure class="chart-card">
-            <figcaption><b>Forward rate of spread against 10 m wind, dry sclerophyll forest</b><span>Kilmore East weather and fuel; observed burning periods as points</span></figcaption>
+            <figcaption><b>Forward rate of spread against 10 m wind, dry sclerophyll forest</b><span>Kilmore East weather and fuel. Points show the observed burning periods.</span></figcaption>
             <div class="chart tall" id="ref-chart"></div>
           </figure>
           <div class="ref-table-wrap">
@@ -304,26 +304,26 @@
           <h2 id="h-limits">What this model leaves out</h2>
           <ul class="limits">
             <li>No ember spotting, which carried the Kilmore East fire 30 km or more ahead of its front.</li>
-            <li>No fire–atmosphere coupling, no plume-driven winds, and no fire channelling in rugged terrain.</li>
-            <li>Weather is held constant for the whole run, and wind is uniform, unbent by hills.</li>
-            <li>Fuel is uniform and continuous. There are no roads, rivers, clearings or vegetation types.</li>
-            <li>Mk5 is known to under-predict summer wildfire spread by a factor of 2 to 3 (Burrows 1999; McCaw et al. 2008). CSIRO now recommends Vesta Mk 2 for dry eucalypt forest.</li>
-            <li>The physics sections idealise the flame as a flat panel of uniform temperature. Real flames flicker, vary in temperature and absorb their own radiation.</li>
-            <li>Terrain is an SRTM-derived ~62 m grid from AWS Terrain Tiles, not Geoscience Australia’s ELVIS data.</li>
+            <li>No coupling between the fire and the atmosphere. No winds driven by the smoke plume, and no fire channelling in rugged terrain.</li>
+            <li>The weather stays constant for the whole run. The wind is uniform, and hills do not change it.</li>
+            <li>Fuel is uniform and continuous. There are no roads, rivers, clearings or different vegetation types.</li>
+            <li>Mk5 predictions of summer wildfire spread are often 2 to 3 times too low (Burrows 1999; McCaw et al. 2008). CSIRO now recommends Vesta Mk 2 for dry eucalypt forest.</li>
+            <li>The physics sections treat the flame as a flat panel at one temperature. Real flames flicker, vary in temperature and absorb their own radiation.</li>
+            <li>The terrain is a 62 m grid from AWS Terrain Tiles, based on SRTM data. It is not Geoscience Australia’s ELVIS data.</li>
           </ul>
-          <p class="edu-final"><strong>This is a teaching tool.</strong> It is not validated for operational use and must not inform evacuation, planning or firefighting decisions.</p>
+          <p class="edu-final"><strong>This is a teaching tool.</strong> It is not validated for operational use. Do not use it for decisions about evacuation, planning or firefighting.</p>
         </div>
         <div class="margin-eqs">
           <h2>Sources</h2>
           <ol class="sources">
-            <li>Cruz M.G. et al. (2012) Anatomy of a catastrophic wildfire: the Black Saturday Kilmore East fire. <i>For. Ecol. Manage.</i> 284, 269–285.</li>
-            <li>Noble I.R., Bary G.A.V., Gill A.M. (1980) McArthur’s fire-danger meters expressed as equations. <i>Aust. J. Ecol.</i> 5, 201–203.</li>
+            <li>Cruz M.G. et al. (2012) Anatomy of a catastrophic wildfire: the Black Saturday Kilmore East fire. <i>For. Ecol. Manage.</i> 284, 269 to 285.</li>
+            <li>Noble I.R., Bary G.A.V., Gill A.M. (1980) McArthur’s fire-danger meters expressed as equations. <i>Aust. J. Ecol.</i> 5, 201 to 203.</li>
             <li>Forestry Canada Fire Danger Group (1992) Development and structure of the Canadian Forest Fire Behavior Prediction System, ST-X-3 (Eq. 79); Alexander M.E. (1985) Estimating the length-to-breadth ratio of elliptical forest fire patterns.</li>
             <li>Cruz M.G., Alexander M.E. (2019) The 10% wind speed rule of thumb for estimating a wildfire’s forward rate of spread. <i>Ann. For. Sci.</i> 76, 44.</li>
-            <li>Finney M.A. et al. (2015) Role of buoyant flame dynamics in wildfire spread. <i>PNAS</i> 112, 9833–9838.</li>
-            <li>Várhegyi G., Jakab E., Antal M.J. (1994) Is the Broido–Shafizadeh model for cellulose pyrolysis true? <i>Energy &amp; Fuels</i> 8, 1345–1352.</li>
+            <li>Finney M.A. et al. (2015) Role of buoyant flame dynamics in wildfire spread. <i>PNAS</i> 112, 9833 to 9838.</li>
+            <li>Várhegyi G., Jakab E., Antal M.J. (1994) Is the Broido-Shafizadeh model for cellulose pyrolysis true? <i>Energy &amp; Fuels</i> 8, 1345 to 1352.</li>
             <li>Byram G.M. (1959) Combustion of forest fuels. In <i>Forest Fire: Control and Use</i>.</li>
-            <li>Frandsen W.H. (1971) Fire spread through porous fuels from the conservation of energy. <i>Combust. Flame</i> 16, 9–16.</li>
+            <li>Frandsen W.H. (1971) Fire spread through porous fuels from the conservation of energy. <i>Combust. Flame</i> 16, 9 to 16.</li>
             <li>Wyman C., Sloan P.-P., Shirley P. (2013) Simple analytic approximations to the CIE XYZ colour matching functions. <i>JCGT</i> 2(2).</li>
           </ol>
         </div>
@@ -333,7 +333,7 @@
 
   <footer class="colophon">
     <div class="wrap">
-      <p>Ember is an educational model built for teaching bushfire physics. All code runs in your browser. Terrain: AWS Terrain Tiles (SRTM-derived).</p>
+      <p>I built Ember to teach bushfire physics. All the code runs in your browser. Terrain: AWS Terrain Tiles, based on SRTM data.</p>
     </div>
   </footer>
   <script type="module" src="/src/main.ts"></script>

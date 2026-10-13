@@ -49,7 +49,7 @@ export function initPyrolysisLab(): void {
   const curve = tgaCurve();
   const peak = curve.reduce((a, c) => (c[2] > a[2] ? c : a), curve[0]!);
   tga.set({
-    series: [{ name: "Mass-loss rate", color: "var(--series-rad)", points: curve.map(([T, , r]) => [C(T), r * 60 * 100]), area: true, endLabel: false }],
+    series: [{ name: "Rate of mass loss", color: "var(--series-rad)", points: curve.map(([T, , r]) => [C(T), r * 60 * 100]), area: true, endLabel: false }],
     x: { min: 200, max: 450, title: "Temperature (°C)" },
     y: { min: 0, max: Math.ceil(peak[2] * 6000 / 5) * 5, title: "% per minute" },
     markers: [{ x: C(peak[0]), y: peak[2] * 6000, label: `${fmt(C(peak[0]), 0)} °C`, color: "var(--series-rad)", detail: `Peak mass loss at ${fmt(C(peak[0]), 0)} °C, ${fmt(peak[2] * 6000, 1)}% per minute` }],
@@ -98,7 +98,7 @@ export function initPyrolysisLab(): void {
     });
     const fluxMax = Math.max(3, ...states.map((s) => s.volatileFlux * 1000));
     fluxChart.set({
-      series: [{ name: "Flammable-gas flux", color: "var(--series-obs)", points: states.map((s) => [s.t, s.volatileFlux * 1000]), endLabel: false }],
+      series: [{ name: "Flux of flammable gas", color: "var(--series-obs)", points: states.map((s) => [s.t, s.volatileFlux * 1000]), endLabel: false }],
       x: xAxis,
       y: { min: 0, max: Math.min(60, Math.ceil(fluxMax * 1.1)), title: "g/m²/s" },
       hlines: [{ y: p.critMassFlux * 1000, label: "critical" }],
@@ -112,14 +112,14 @@ export function initPyrolysisLab(): void {
     readouts($("#pyro-readouts"), [
       ["Time to ignition", tIg !== null ? fmt(tIg, 1) : "no ignition", tIg !== null ? "s" : undefined],
       ["Hottest it gets", fmt(C(maxT), 0), "°C"],
-      ["Surface-to-volume σ", fmt(surfaceToVolume(p), 0), "m⁻¹"],
+      ["Surface to volume ratio σ", fmt(surfaceToVolume(p), 0), "m⁻¹"],
       ["Convective h", fmt(hNow, 0), "W/m²K"],
     ]);
     $("#pyro-caption").textContent = tIg !== null
       ? `Ignites after ${fmt(tIg, 1)} s.${bands.length ? " Shaded: the 100 °C drying stall." : ""}`
       : maxT > Tig - 40
-        ? "No ignition: the leaf pyrolyses slowly and chars away without ever releasing gas fast enough."
-        : `No ignition in ${tMax} s: heat lost to the air and re-radiated balances what it absorbs.`;
+        ? "No ignition. The leaf pyrolyses slowly and turns to char. It never releases gas fast enough to ignite."
+        : `No ignition in ${tMax} s. The heat that the leaf loses to the air and by radiation balances the heat it absorbs.`;
     equationLive($("#eq-arr"), `E = ${E_ACT / 1000} kJ/mol, A = ${A_PRE.toExponential(2)} s⁻¹. At ${fmt(C(Tig), 0)} °C, k = ${fmt(arrheniusRate(Tig), 3)} s⁻¹; at 300 °C only ${arrheniusRate(573.15).toExponential(1)} s⁻¹.`);
 
     playLeaf(run, tEnd);

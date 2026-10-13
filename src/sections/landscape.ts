@@ -78,10 +78,10 @@ export async function initLandscape(): Promise<void> {
     const lb = lengthToBreadth(weather.wind);
     $("#ffdi").innerHTML = `<span class="num">${fmt(f, 0)}</span><span><span class="cat">FFDI, ${ffdiCategory(f)}</span><br><span class="sub">Head fire on flat ground ${fmt(ros, 2)} km/h (${fmt((ros * 1000) / 60, 0)} m/min)</span></span>`;
     $("#assumptions").innerHTML = [
-      ["Terrain", `SRTM-derived ${fmt(cs, 0)} m grid (${meta.source.split(",")[0]}), ${fmt(meta.minElevation, 0)}–${fmt(meta.maxElevation, 0)} m, ${fmt((W * cs) / 1000, 1)} km square west of Canberra. Slope doubles spread per 10° uphill, capped at 20°.`],
-      ["Fuel", `Dry eucalypt forest with ${fuel} t/ha of fine fuel everywhere, continuous, with no breaks, roads or clearings.`],
-      ["Weather", `${weather.temp} °C, ${weather.humidity}% humidity, ${weather.wind} km/h wind from the ${compass(windFrom)}, drought factor ${weather.drought}. Held constant for 6 hours; wind is not bent by terrain.`],
-      ["Model", `McArthur Mk5 head-fire rate, ellipse length-to-breadth ${fmt(lb, 1)} (FBP Eq. 79). No spotting. Mk5 tends to under-predict wildfire spread by 2 to 3 times.`],
+      ["Terrain", `A ${fmt((W * cs) / 1000, 1)} km square west of Canberra, on a ${fmt(cs, 0)} m grid based on SRTM (${meta.source.split(",")[0]}). Elevation ${fmt(meta.minElevation, 0)} to ${fmt(meta.maxElevation, 0)} m. Slope doubles the spread for each 10° uphill, up to a limit of 20°.`],
+      ["Fuel", `Dry eucalypt forest with ${fuel} t/ha of fine fuel everywhere. The fuel is continuous, with no breaks, roads or clearings.`],
+      ["Weather", `${weather.temp} °C, ${weather.humidity}% humidity, ${weather.wind} km/h wind from the ${compass(windFrom)}, drought factor ${weather.drought}. The weather stays constant for 6 hours. The terrain does not change the wind.`],
+      ["Model", `McArthur Mk5 rate for the head fire, with an ellipse of length to breadth ${fmt(lb, 1)} (FBP Eq. 79). No spotting. Mk5 predictions of wildfire spread are often 2 to 3 times too low.`],
     ].map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
     equationLive($("#eq-ffdi"), `= ${fmt(f, 1)} (${ffdiCategory(f)})`);
     equationLive($("#eq-lb"), `U = ${weather.wind} km/h → L/B = ${fmt(lb, 2)}`);
@@ -257,18 +257,18 @@ export async function initLandscape(): Promise<void> {
   // ---- equations and the L/B chart ----------------------------------------------------------------
   equation($("#eq-ffdi"), "McArthur Mk5 forest fire danger index (Noble et al. 1980)",
     String.raw`\text{FFDI} = 2\exp(-0.45 + 0.987\ln D - 0.0345\,H + 0.0338\,T + 0.0234\,U)`);
-  equation($("#eq-lb"), "Fire-ellipse length-to-breadth ratio (FBP Eq. 79)",
+  equation($("#eq-lb"), "Ratio of length to breadth of the fire ellipse (FBP Eq. 79)",
     String.raw`L/B = 1 + 8.729\,\big(1 - e^{-0.030\,U}\big)^{2.155}`);
   const lbChart = new LineChart($("#lb-chart"));
   const us = Array.from({ length: 81 }, (_, i) => i);
   lbChart.set({
     series: [
       { name: "FBP Eq. 79", color: "var(--series-rad)", points: us.map((u) => [u, lengthToBreadth(u)]) },
-      { name: "Old placeholder", color: "var(--ink-3)", points: us.map((u) => [u, Math.min(8, 1 + 0.125 * u)]), dash: "5 4" },
+      { name: "Linear rule, 1 + 0.125·U", color: "var(--ink-3)", points: us.map((u) => [u, Math.min(8, 1 + 0.125 * u)]), dash: "5 4" },
     ],
     x: { min: 0, max: 80, title: "Wind, 10 m open (km/h)" },
     y: { min: 0, max: 10, title: "L/B" },
-    markers: [{ x: 46, y: 5, label: "Kilmore East", color: "var(--series-obs)", detail: "Kilmore East, 14:00–15:00: L:B ≈ 5 at 46 km/h (Cruz et al. 2012)" }],
+    markers: [{ x: 46, y: 5, label: "Kilmore East", color: "var(--series-obs)", detail: "Kilmore East, 14:00 to 15:00: L:B ≈ 5 at 46 km/h (Cruz et al. 2012)" }],
     tipFormat: (v) => fmt(v, 2),
     xTipFormat: (v) => `${fmt(v, 0)} km/h`,
   });

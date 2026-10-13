@@ -77,7 +77,7 @@ export function readouts(root: HTMLElement, items: [string, string, string?, str
     .join("");
 }
 
-export const fmt = (v: number, d = 1) => (Number.isFinite(v) ? v.toLocaleString("en-AU", { minimumFractionDigits: d, maximumFractionDigits: d }) : "–");
+export const fmt = (v: number, d = 1) => (Number.isFinite(v) ? v.toLocaleString("en-AU", { minimumFractionDigits: d, maximumFractionDigits: d }) : "n/a");
 export const kw = (w: number, d = 1) => fmt(w / 1000, d);
 export const deg = (rad: number) => (rad * 180) / Math.PI;
 

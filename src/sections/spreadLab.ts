@@ -54,7 +54,7 @@ export function initSpreadLab(): void {
   const g = group(root, "Flame");
   const closure = toggle(g, "s-close", "Flame sized by the fire (Byram)", true, () => { syncLen(); schedule(); });
   const readLen = sliders(g, [{ id: "s-len", label: "Flame length (when set by hand)", min: 0.5, max: 25, step: 0.5, value: 4, format: (v) => `${v} m` }], () => schedule());
-  const losses = toggle(g, "s-loss", "Heated fuel loses heat (re-radiation, air cooling)", true, () => schedule());
+  const losses = toggle(g, "s-loss", "Heated fuel loses heat (radiation, cooling by air)", true, () => schedule());
   const lenInput = document.getElementById("s-len") as HTMLInputElement;
   const syncLen = () => { lenInput.disabled = closure(); lenInput.closest("label")!.style.opacity = closure() ? "0.45" : "1"; };
   syncLen();
@@ -81,15 +81,15 @@ export function initSpreadLab(): void {
     last = { res, inp };
     const mpm = res.rateMs * 60;
     $("#spread-result").innerHTML = res.status === "none"
-      ? `<span class="num">0</span><span class="unit">m/min<br>no steady spread</span><span class="sub">The flame cannot heat the bed to ignition faster than the bed loses heat. Radiation alone cannot carry this fire.</span>`
-      : `<span class="num">${fmt(mpm, 1)}</span><span class="unit">m/min<br>radiation-driven spread rate</span>
+      ? `<span class="num">0</span><span class="unit">m/min<br>no steady spread</span><span class="sub">The bed loses heat faster than the flame can heat it to ignition. Radiation alone cannot carry this fire.</span>`
+      : `<span class="num">${fmt(mpm, 1)}</span><span class="unit">m/min<br>spread rate from radiation only</span>
          <span class="sub">Flame ${fmt(res.flame.length, 1)} m long, leaning ${fmt(deg(res.flame.tiltRad), 0)}°. Fireline intensity ${fmt(res.intensityKWm, 0)} kW/m. Ignition at ${fmt(inp.ignitionK - 273.15, 0)} °C needs Q<sub>ig</sub> = ${fmt(res.qIg / 1000, 0)} kJ/kg.</span>`;
     const need = res.rateMs * inp.fuelLoad * res.qIg;
     const rows: [string, number, string][] = [
       ["Absorbed through top", res.powerTop, "var(--series-rad)"],
       ["Absorbed through face", res.powerFace, "var(--series-rad)"],
       ["Lost by heated fuel", res.powerLost, "var(--series-conv)"],
-      ["Used: R·w·Q_ig", need, "var(--ink)"],
+      ["Used: R·w·Q<sub>ig</sub>", need, "var(--ink)"],
     ];
     const max = Math.max(1, ...rows.map((r) => r[1]));
     $("#spread-budget").innerHTML = `<p class="note"><b>Power per metre of fire line</b></p>` + rows

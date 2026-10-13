@@ -2,6 +2,7 @@
   "name": "ember",
   "private": true,
   "version": "0.2.0",
+  "description": "An interactive model of bushfire physics, from flame radiation to McArthur Mk5 spread on real terrain near Canberra. For teaching only.",
   "license": "MIT",
   "engines": { "node": ">=22.18.0" },
   "type": "module",

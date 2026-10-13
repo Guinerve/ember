@@ -30,7 +30,7 @@ export const KILMORE_EAST: ReferenceCase[] = [
   {
     id: "bp4",
     label: "Burning period 4",
-    time: "14:00–15:00",
+    time: "14:00 to 15:00",
     fuel: "Dry sclerophyll forest, low understorey",
     weather: { temp: 42, humidity: 10, wind: 46, drought: 10 },
     fuelLoadTha: 15.6,
@@ -40,7 +40,7 @@ export const KILMORE_EAST: ReferenceCase[] = [
   {
     id: "bp5",
     label: "Burning period 5",
-    time: "15:00–16:00",
+    time: "15:00 to 16:00",
     fuel: "Dry sclerophyll forest, low understorey",
     weather: { temp: 41.4, humidity: 10, wind: 63, drought: 10 },
     fuelLoadTha: 15.6,
@@ -50,7 +50,7 @@ export const KILMORE_EAST: ReferenceCase[] = [
 ];
 
 export const KILMORE_SOURCE = {
-  citation: "Cruz et al. (2012) Forest Ecology and Management 284, 269–285",
+  citation: "Cruz et al. (2012) Forest Ecology and Management 284, 269 to 285",
   doi: "https://doi.org/10.1016/j.foreco.2012.02.035",
 };
 

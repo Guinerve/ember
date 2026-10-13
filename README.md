@@ -1,119 +1,103 @@
 # ember
 
-> An explorable model of bushfire physics, from Stefan–Boltzmann radiation to fire spread on real Canberra terrain.
+An interactive model of bushfire physics. It starts with the heat that one flame radiates and ends with fire spread on real terrain west of Canberra.
 
 [![CI](https://github.com/Guinerve/ember/actions/workflows/ci.yml/badge.svg)](https://github.com/Guinerve/ember/actions/workflows/ci.yml)
 
-**v0.2:** six physics and landscape sections, a worker-based spread solver, and a published reference-fire comparison.
+**Educational model only.** Do not use it to predict a real fire or to make safety decisions. For warnings, follow your state fire service.
 
-**Educational model only.** Do not use it to predict a real fire or to make safety decisions.
+![The landscape section: two fires spread for 2.5 hours across the Brindabella Ranges with Kilmore East weather (FFDI 106)](assets/hero-landscape.jpg)
 
-![ember: radiation from a flame front, with view-factor angles](assets/screenshot.png)
+I built ember to understand why bushfires spread the way they do. Fire danger tables give a number, but they do not show the physics behind it. This page builds that physics one step at a time, from radiation to pyrolysis to a rate of spread. Then it runs McArthur's Mk5 forest model over a real elevation grid of the Brindabella Ranges. The last section compares every model with the measured spread of the Black Saturday Kilmore East fire.
 
-## What it shows
+## Quick start
 
-The page builds the physics up as a chain, one section per link:
-
-1. **Radiation.** A 3D flame front radiates onto the ground. Flux is `q = εσT⁴·F`, with the view factor `F = ∫ cosθ₁ cosθ₂ / (πr²) dA` integrated over the flame. The flame is drawn in the colour Planck's law gives its temperature. The ground is contoured at the AS 3959 flux bands (12.5, 19, 29, 40 kW/m²). The strongest ray to the leaf is drawn with its angles θ₁ and θ₂, and a second mode colours the flame by how much each part of it heats the leaf.
-2. **Heat paths.** Radiation, flame-contact convection and bed conduction against distance ahead of the fire line, plus radiation (∝ T⁴) against convection (∝ T).
-3. **Pyrolysis.** One thermally thin leaf or twig: heating, a 100 °C drying stall, Arrhenius pyrolysis and ignition at a critical flammable-gas flux.
-4. **Spread from first principles.** `R·w·Q_ig = α∫q dx + face radiation − losses`, solved for R. Byram's flame-length correlation optionally closes the loop between spread rate and flame size.
-5. **Landscape.** McArthur Mk5 spread over a real DEM of the Brindabellas, as a 2D map or a 3D terrain view. Live assumptions sit beside the output.
-6. **Reference fire.** Comparison against the Black Saturday Kilmore East fire (Cruz et al. 2012).
-
-![Spread rate from a radiative energy balance](assets/spread-physics.png)
-
-## Stack
-
-TypeScript, Vite, three.js, KaTeX, Vitest; Python for DEM preprocessing. The landscape solve runs in a Web Worker.
-
-The dev server binds to `0.0.0.0` on port **5194**, so it's reachable over Tailscale (`vite --host 0.0.0.0 --port 5194 --strictPort`).
-
-Use Node **22.18 or later**. The repository remains private; no public deployment is claimed.
-
-## Run it
+You need Node 22.18 or later.
 
 ```bash
 npm ci
-npm run dev                    # http://0.0.0.0:5194
-npm test                       # 53 tests
-npm run build                  # type check and static build in dist/
-# Optional: uv run scripts/fetch_dem.py to regenerate the included DEM
+npm run dev
 ```
 
-## How I know it's right
+Open http://localhost:5194. All the code runs in the browser. The elevation grid is already in `public/`.
 
-53 tests (`src/*.test.ts`, `src/physics/physics.test.ts`). Terrain-loading tests reject HTTP failures, invalid metadata, and mismatched binary grids before the solver starts.
+## What the page shows
 
-**Radiation and heat transfer**
-- σT⁴ at 1,000 K = 56.7 kW/m².
-- The numerical view factor matches two exact results within 1%:
-  - a receiver facing a parallel rectangle (corner formula);
-  - a horizontal element against an infinite upright strip, `½(1 − x/√(x²+L²))`.
-- `∫q dx` onto the ground from an upright infinite flame equals `εσT⁴·L/2` exactly.
-- Flux falls with distance and never exceeds the emitted power. A flame leaning over the fuel delivers more than 1.8× the flux of an upright one at the same spot.
+The page has six sections. The first three share one flame, and section 6 reuses the model from section 4.
 
-**Leaf heating and pyrolysis**
-- Energy is conserved in the leaf: at steady state, absorbed equals lost.
-- The leaf holds at 100 °C while it dries.
-- There is a critical flux: the leaf ignites at 80 kW/m² and not at 10 kW/m².
-- A simulated 10 K/min TGA run peaks at the 345 °C calibration temperature.
+1. **Radiation.** A 3D flame front radiates onto the ground. The flux is `q = εσT⁴·F`. The view factor `F = ∫ cosθ₁ cosθ₂ / (πr²) dA` is integrated over the flame. The flame has the colour that Planck's law gives for its temperature. Contours on the ground show the AS 3959 flux bands (12.5, 19, 29 and 40 kW/m²).
+2. **Heat paths.** Radiation, convection from flame contact and conduction in the fuel bed, plotted against distance ahead of the fire.
+3. **Pyrolysis.** One thin leaf or twig heats up. It stays at 100 °C while it dries, then breaks down by Arrhenius pyrolysis. It ignites when its flux of flammable gas reaches a critical value.
+4. **Spread rate from physics.** The energy balance `R·w·Q_ig = α∫q dx + face radiation − losses` gives the spread rate R. As an option, Byram's correlation for flame length links the flame size to the spread rate.
+5. **Landscape.** McArthur Mk5 spread over a real elevation grid, as a 2D map or a 3D terrain view. The assumptions behind each result are listed next to it.
+6. **Reference fire.** A comparison with the Kilmore East fire of 7 February 2009 (Cruz et al. 2012).
 
-**Spread from the energy balance**
-- The budget closes: `R·w·Q_ig` equals absorbed minus lost.
-- A flame cooler than the ignition temperature can never carry the fire.
+![Section 1: a flame front radiates onto the ground, with the AS 3959 flux contours and the angles of the strongest ray](assets/screenshot.jpg)
 
-**Reference case and map model**
-- Our FFDI reproduces the Kilmore East published values of 106 and 155.
-- Mk5 under-predicts the observed spread by 2.0× and 3.2×, matching the literature's 2–3×.
-- On flat ground the map model's head fire runs at the Mk5 rate (within 5%), and its burnt shape has the model L/B (within 15%).
-- The older checks still pass: FFDI hand calculation, symmetry, wind and slope behaviour, hillshade direction.
+![Section 4: spread rate from a radiative energy balance, with the flame, the preheated fuel bed and the power budget](assets/spread-physics.jpg)
 
-## Reference case: Kilmore East, 7 February 2009
+## How it works
 
-Source: Cruz et al. (2012), *For. Ecol. Manage.* 284, 269–285. Weather is from Kilmore Gap AWS, fine fuel is 15.6 t/ha for dry sclerophyll forest with a low understorey, and the drought factor is 10.
+The physics is in `src/physics/`. The landscape model is in `src/ffdi.ts` and `src/spread.ts`.
 
-| | 14:00–15:00 | 15:00–16:00 |
+- **View factor.** For a receiver that tilts only towards or away from the fire, the integral along the fire line has an exact solution. So only the integral up the flame is numerical.
+- **Leaf heating.** The leaf is thermally thin, so it has one temperature. Heun's method advances that temperature in time. Pyrolysis advances exactly over each step.
+- **Spread rate.** The model marches the heat balance from far ahead of the fire back to the fire line. It then finds the rate R by bisection. Losses by radiation and to the air are included.
+- **Landscape.** Each cell burns at the earliest time it can be reached from an ignition. A step between cells takes its distance divided by the local rate of spread. That rate is the Mk5 head fire rate `R = 0.0012 · FFDI · w`, with a slope correction and an ellipse around the wind. The ellipse uses Equation 79 of the Canadian Fire Behavior Prediction System for its length to breadth ratio.
+- **Search directions.** Each cell connects to 80 neighbours, out to 5 cells away. With only 16 neighbours, fires in strong wind came out about 35% too narrow.
+- **Worker.** The landscape solve runs in a Web Worker, so the page stays responsive.
+
+The elevation grid comes from AWS Terrain Tiles (SRTM data). It is 384 by 384 cells of 62 m, a 23.9 km square west of Canberra. `scripts/fetch_dem.py` downloads it again if you want to change the area (`uv run scripts/fetch_dem.py`).
+
+## Comparison with the Kilmore East fire
+
+Cruz et al. (2012) published the weather, fuel and measured spread of the Kilmore East fire, hour by hour. The weather is from the Kilmore Gap weather station. The fine fuel is 15.6 t/ha of dry sclerophyll forest with a low understorey. The drought factor is 10.
+
+| | 14:00 to 15:00 | 15:00 to 16:00 |
 |---|---|---|
 | Observed forward spread | 68 m/min | 153 m/min |
-| FFDI (ours; published 106, 155) | 106 | 155 |
+| FFDI from this model (published: 106 and 155) | 106 | 155 |
 | McArthur Mk5 | 33 m/min | 48 m/min |
-| 10% of wind speed (Cruz & Alexander 2019) | 77 m/min | 105 m/min |
-| Radiation-only physics (section 4) | ~12 m/min | ~14 m/min |
-| L/B, FBP Eq. 79 (observed ≈ 5) | 5.7 | 7.1 |
+| 10% of wind speed (Cruz and Alexander 2019) | 77 m/min | 105 m/min |
+| Physics, radiation only (section 4) | 12 m/min | 14 m/min |
+| Length to breadth, FBP Eq. 79 (observed about 5) | 5.7 | 7.1 |
 
-The radiation-only model falls short on purpose. Radiation preheats and dries fuel, but these runs were carried by flame contact, turbulence and dense spotting (see Finney et al. 2015).
+The FFDI matches the published values. Mk5 predicts spread that is 2.0 and 3.2 times too slow. Published studies report 2 to 3 times for summer wildfires, so the second hour is a little above that range. The model with radiation only is slower still. Radiation preheats and dries the fuel, but flame contact, turbulence and dense spotting carried these runs (Finney et al. 2015).
 
-## Changes in this version
+## Tests
 
-- **Wind shape.** The `1 + 0.125·U` placeholder is replaced by Canadian FBP Eq. 79, `L/B = 1 + 8.729(1 − e^(−0.030U))^2.155`, which is fitted to Alexander's (1985) forest-fire shapes; CSIRO's Spark ellipse template points to the same source. It gives 5.7 at 46 km/h against an observed ≈ 5. The placeholder gave 6.75.
-- **Spread kernel.** The kernel grows from 16 to 80 neighbours (every primitive step out to radius 5). With 16 directions, narrow wind-driven ellipses came out ~35% too narrow, because their widest point lies ~10° off the wind axis and the nearest kernel direction was 26.6°. A full solve now takes ~300 ms, so it moved to a Web Worker.
-- **Failure handling.** Terrain-load errors are visible. Worker errors clear stale fire results and show a retry message. Queued weather changes do not render an older solve as the current one. Coordinate inputs are rounded to grid cells.
+```bash
+npm test         # 56 tests
+npm run build    # type check and static build in dist/
+```
+
+The tests check the physics against exact results and published values:
+
+- σT⁴ at 1,000 K is 56.7 kW/m².
+- The numerical view factor matches two exact results within 1%. One is a receiver that faces a parallel rectangle. The other is a ground element next to an infinite upright strip, `½(1 − x/√(x²+L²))`.
+- The flux onto the ground from an infinite upright flame integrates to exactly `εσT⁴·L/2`.
+- The leaf conserves energy. It holds at 100 °C while it dries. It ignites at 80 kW/m² but not at 10 kW/m².
+- A simulated 10 K/min heating test peaks at the 345 °C calibration temperature.
+- The spread energy budget closes. A flame cooler than the ignition temperature never carries the fire.
+- The FFDI gives the published Kilmore East values of 106 and 155.
+- On flat ground, the map model's head fire runs at the Mk5 rate (within 5%). Its burnt shape has the model length to breadth ratio (within 15%).
+- The terrain loader rejects HTTP errors, bad metadata and grids of the wrong size before the solver starts.
+
+CI runs the tests and the build on every push.
 
 ## Limits
 
-No ember spotting, fire–atmosphere coupling or suppression. Weather is constant for 6 h, wind is uniform, and fuel is uniform and continuous. Mk5 is known to under-predict summer wildfire spread by 2–3×; CSIRO now recommends Vesta Mk 2 for dry eucalypt forest. The physics sections idealise the flame as a flat, uniform-temperature panel with no atmospheric absorption. Terrain is an SRTM-derived ~62 m grid (AWS Terrain Tiles), not ELVIS.
+- No ember spotting, no coupling between the fire and the atmosphere, and no suppression.
+- The weather stays constant for 6 hours. The wind is uniform, and the terrain does not change it.
+- The fuel is uniform and continuous, with no roads, rivers or clearings.
+- Mk5 predictions of summer wildfire spread are often 2 to 3 times too low. CSIRO now recommends Vesta Mk 2 for dry eucalypt forest.
+- The physics sections treat the flame as a flat panel at one temperature, with no absorption by the air.
+- The terrain is a 62 m grid based on SRTM, not the finer ELVIS data from Geoscience Australia.
 
-## Browser check
+## Stack
 
-Checked in headless Chrome (puppeteer-core, SwiftShader WebGL) on 2026-10-13, in light and dark modes at 1440 px and 390 px. There were no console errors and no horizontal overflow at either width. Contribution mode, the 3D terrain view, Play and the Kilmore East button all work.
+TypeScript, Vite, three.js, KaTeX and Vitest. Python (numpy, Pillow, httpx) for the elevation grid.
 
-Additional Playwright checks confirmed the Kilmore East preset gives FFDI 106 and a flat-ground Mk5 rate of 33 m/min. Play, 2D/3D switching, clearing ignitions, and fractional coordinate entry work. An injected terrain HTTP 404 produces a visible alert. The mobile view has no horizontal overflow at 390 px.
+## Licence
 
-## Next
-
-- Add flame-contact convection to the section 4 energy balance, and compare with Vesta Mk 2.
-- Use an ELVIS tile in place of the SRTM-derived one.
-- Overlay a historical fire perimeter for a qualitative comparison.
-- Refresh the demo GIF for the new page (the current one shows v0.1).
-
-## Release checklist
-
-- [x] Hero GIF or screenshot at the top of this README
-- [x] Live demo link or one-command run (`npm install && npm run dev`)
-- [x] "How I know it's right" section filled in with real results
-- [x] CI test/build workflow and badge
-- [x] "Limits" section written
-- [x] MIT licence, repository description, and topics
-
-Profile pinning and entries in `guinerve.github.io` and `career-radar/data/cv/portfolio.json` remain separate portfolio tasks.
+MIT. See [LICENSE](LICENSE).

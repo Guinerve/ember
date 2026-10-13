@@ -34,7 +34,7 @@ export function initReference(): void {
     series: [
       { name: "10% of wind speed rule", color: "var(--series-cond)", points: tenPct, dash: "5 4" },
       { name: "McArthur Mk5", color: "var(--series-conv)", points: mk5 },
-      { name: "Radiation-only physics", color: "var(--series-rad)", points: phys },
+      { name: "Physics, radiation only", color: "var(--series-rad)", points: phys },
     ],
     x: { min: 0, max: 80, title: "Wind, 10 m open (km/h)" },
     y: { min: 0, max: 170, title: "m/min" },
@@ -54,8 +54,8 @@ export function initReference(): void {
       <tr><td>FFDI, ours<small>published: 106 and 155</small></td>${rows.map(({ r }) => `<td>${fmt(r.ffdi, 0)}</td>`).join("")}</tr>
       <tr><td>McArthur Mk5 (map model)<small>15.6 t/ha fine fuel</small></td>${rows.map(({ c, r }) => `<td>${fmt(r.mk5MperMin, 0)} m/min${ratio(c.observedMperMin, r.mk5MperMin)}</td>`).join("")}</tr>
       <tr><td>10% of wind speed<small>Cruz &amp; Alexander 2019</small></td>${rows.map(({ c, r }) => `<td>${fmt(r.tenPercentMperMin, 0)} m/min${ratio(c.observedMperMin, r.tenPercentMperMin)}</td>`).join("")}</tr>
-      <tr><td>Radiation-only physics<small>section 4, flame sized by the fire</small></td>${rows.map(({ c, p }) => `<td>${fmt(p.rateMs * 60, 0)} m/min${ratio(c.observedMperMin, p.rateMs * 60)}</td>`).join("")}</tr>
-      <tr><td>Length-to-breadth<small>model, FBP Eq. 79</small></td>${rows.map(({ c, r }) => `<td>${fmt(r.modelLB, 1)}<small>${c.observedLB ? `observed ≈ ${c.observedLB}` : "not reported"}</small></td>`).join("")}</tr>
+      <tr><td>Physics, radiation only<small>section 4, flame sized by the fire</small></td>${rows.map(({ c, p }) => `<td>${fmt(p.rateMs * 60, 0)} m/min${ratio(c.observedMperMin, p.rateMs * 60)}</td>`).join("")}</tr>
+      <tr><td>Length to breadth<small>model, FBP Eq. 79</small></td>${rows.map(({ c, r }) => `<td>${fmt(r.modelLB, 1)}<small>${c.observedLB ? `observed ≈ ${c.observedLB}` : "not reported"}</small></td>`).join("")}</tr>
     </tbody>`;
   $("#ref-note").innerHTML = `Mk5 gives the published FFDI. It under-predicts the observed spread by ${fmt(rows[0]!.r.underprediction, 1)} and ${fmt(rows[1]!.r.underprediction, 1)} times. Published studies report 2 to 3 times for summer wildfires, so the second hour is a little above that range. The model with radiation only falls further short. That is the point of section 4: radiation preheats the fuel, but flame contact, turbulence and dense spotting over short distances carried the fire in these hours. Physics inputs: forest fuel moisture 4.5% (Table A2). Wind at flame height is one third of the 10 m wind (my assumption). Source: <a href="${KILMORE_SOURCE.doi}">${KILMORE_SOURCE.citation}</a>.`;
 

@@ -67,8 +67,8 @@ export function initHeatPaths(): void {
     x: { min: 300, max: 1500, title: "Surface temperature (K)" },
     y: { min: 0, max: 300, title: "kW/m²" },
     markers: [
-      { x: x25, y: (25 * (x25 - T_AMB)) / 1000, label: `${x25} K`, color: "var(--ink)", detail: `Radiation overtakes still-air convection (h = 25 W/m²K) at ${x25} K` },
-      { x: x100, y: (100 * (x100 - T_AMB)) / 1000, label: `${x100} K`, color: "var(--ink)", detail: `Radiation overtakes windy convection (h = 100 W/m²K) at ${x100} K` },
+      { x: x25, y: (25 * (x25 - T_AMB)) / 1000, label: `${x25} K`, color: "var(--ink)", detail: `Radiation passes convection in still air (h = 25 W/m²K) at ${x25} K` },
+      { x: x100, y: (100 * (x100 - T_AMB)) / 1000, label: `${x100} K`, color: "var(--ink)", detail: `Radiation passes convection in wind (h = 100 W/m²K) at ${x100} K` },
     ],
     vlines: [{ x: 1090, label: "1090 K flame" }],
     tipFormat: (v) => `${fmt(v, 1)} kW/m²`,
