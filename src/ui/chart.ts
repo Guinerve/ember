@@ -173,7 +173,9 @@ export class LineChart {
     for (const mk of spec.markers ?? []) {
       if (!ok([mk.x, mk.y])) continue;
       svg += `<circle cx="${sx(mk.x)}" cy="${sy(mk.y)}" r="5.5" fill="${mk.color}" stroke="var(--paper-2)" stroke-width="2"/>`;
-      svg += `<text class="lbl" x="${sx(mk.x) + 9}" y="${sy(mk.y) + 4}" style="fill:var(--ink)">${esc(mk.label)}</text>`;
+      // put the label on the left of the point when it would run past the right edge
+      const left = sx(mk.x) + 9 + mk.label.length * 6.3 > W - 4;
+      svg += `<text class="lbl" x="${left ? sx(mk.x) - 9 : sx(mk.x) + 9}" y="${sy(mk.y) + 4}" text-anchor="${left ? "end" : "start"}" style="fill:var(--ink)">${esc(mk.label)}</text>`;
     }
     svg += `<line class="xhair" x1="0" x2="0" y1="${m.t}" y2="${m.t + ph}" stroke="var(--ink-2)" stroke-width="1" visibility="hidden"/>`;
     svg += `<rect class="hit" x="${m.l}" y="${m.t}" width="${pw}" height="${ph}" fill="transparent"/>`;
