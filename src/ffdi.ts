@@ -35,9 +35,19 @@ export function slopeFactor(slopeDeg: number): number {
   return Math.pow(2, s / 10);
 }
 
-/** Length-to-breadth ratio of the fire ellipse from wind speed (km/h). */
+/**
+ * Length-to-breadth ratio of a point-ignition fire ellipse, from the 10 m open wind speed (km/h).
+ *
+ * L/B = 1 + 8.729·(1 − e^(−0.030·U))^2.155: Equation 79 of the Canadian Fire Behavior Prediction System
+ * (Forestry Canada Fire Danger Group 1992, ST-X-3), fitted to Alexander's (1985) forest-fire shapes.
+ * Australian systems have no widely used eucalypt-forest L/B relation; CSIRO's Spark elliptical template
+ * points to Alexander (1985) for this ratio. The fit saturates near 9.7 instead of growing without bound,
+ * and gives L/B ≈ 5.7 at 46 km/h, close to the L:B of 5 mapped for the Kilmore East fire in dry
+ * sclerophyll forest at that wind (Cruz et al. 2012); see reference.ts.
+ */
 export function lengthToBreadth(windKmh: number): number {
-  return Math.min(8, 1 + 0.125 * windKmh);
+  const u = Math.max(0, windKmh);
+  return 1 + 8.729 * Math.pow(1 - Math.exp(-0.03 * u), 2.155);
 }
 
 /**
