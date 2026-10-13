@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadTerrain } from "./terrain";
+import { cellAt, loadTerrain } from "./terrain";
 
 const meta = { width: 2, height: 2, cellSizeM: 60, minElevation: 100, maxElevation: 130, source: "test terrain" };
 const samples = new Int16Array([100, 110, 120, 130]);
@@ -33,5 +33,16 @@ describe("terrain loading", () => {
 
   it("rejects truncated or mixed-build elevation data", async () => {
     await expect(loadTerrain("/", server(meta, new ArrayBuffer(6)))).rejects.toThrow("Terrain grid size");
+  });
+});
+
+describe("cellAt (map clicks and typed coordinates to grid cells)", () => {
+  it("maps fractions of the map to the cell under them", () => {
+    expect(cellAt(0, 0, 384, 384)).toEqual({ x: 0, y: 0 });
+    expect(cellAt(0.5, 0.25, 384, 384)).toEqual({ x: 192, y: 96 });
+  });
+  it("keeps a click on the far edge inside the grid (regression: x = 1 gave cell 384 of 0..383)", () => {
+    expect(cellAt(1, 1, 384, 384)).toEqual({ x: 383, y: 383 });
+    expect(cellAt(1.01, -0.01, 384, 384)).toEqual({ x: 383, y: 0 });
   });
 });

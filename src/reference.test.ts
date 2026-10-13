@@ -11,7 +11,7 @@ describe("Kilmore East reference case (Cruz et al. 2012)", () => {
     expect(compareReference(bp5).ffdi).toBeCloseTo(155, -0.5);
   });
 
-  it("Mk5 under-predicts the observed spread by a factor of 2–3.5, as the literature reports", () => {
+  it("Mk5 under-predicts the observed spread by 2 to 3.5 times, near the 2 to 3 times the literature reports", () => {
     for (const c of [bp4, bp5]) {
       const r = compareReference(c);
       expect(r.underprediction).toBeGreaterThan(2);

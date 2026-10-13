@@ -35,3 +35,9 @@ export async function loadTerrain(base: string, fetcher: typeof fetch = fetch): 
   const elevation = Float32Array.from(new Int16Array(buffer));
   return { meta, terrain: { width: meta.width, height: meta.height, cellSizeM: meta.cellSizeM, elevation } };
 }
+
+/** Grid cell under a point given as fractions (0 to 1) across and down the map, clamped to the grid. */
+export function cellAt(fx: number, fy: number, width: number, height: number): { x: number; y: number } {
+  const clamp = (v: number, n: number) => Math.min(n - 1, Math.max(0, Math.floor(v * n)));
+  return { x: clamp(fx, width), y: clamp(fy, height) };
+}

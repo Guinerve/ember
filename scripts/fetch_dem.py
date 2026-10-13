@@ -5,7 +5,7 @@
 """Fetch terrain tiles around the Brindabellas and write a compact elevation grid.
 
 Source: AWS Terrain Tiles (Terrarium encoding, SRTM-derived at this latitude).
-The README's stretch goal is to swap this for a Geoscience Australia ELVIS tile.
+A Geoscience Australia ELVIS tile would give a finer, more recent grid.
 
 Output: public/dem.bin (Int16 little-endian, row-major, north at top) and public/dem.json.
 Run:  uv run scripts/fetch_dem.py

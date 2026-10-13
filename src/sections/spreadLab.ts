@@ -45,7 +45,7 @@ export function initSpreadLab(): void {
   const root = $("#spread-controls");
   const read = sliders(root, [
     { id: "s-wind", label: "Wind at flame height", min: 0, max: 15, step: 0.1, value: 3, format: (v) => `${v.toFixed(1)} m/s (${Math.round(v * 3.6)} km/h)` },
-    { id: "s-fuel", label: "Fine fuel load", min: 5, max: 30, step: 0.5, value: 15.6, format: (v) => `${v} t/ha` },
+    { id: "s-fuel", label: "Fine fuel load", min: 5, max: 30, step: 0.1, value: 15.6, format: (v) => `${v} t/ha` },
     { id: "s-depth", label: "Fuel bed depth", min: 1, max: 20, step: 0.5, value: 4, format: (v) => `${v} cm` },
     { id: "s-moist", label: "Fuel moisture", min: 2, max: 30, step: 0.5, value: 6, format: (v) => `${v}%` },
     { id: "s-temp", label: "Flame temperature", min: 900, max: 1400, step: 10, value: 1090, format: (v) => `${v} K` },

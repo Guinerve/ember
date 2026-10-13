@@ -82,15 +82,26 @@ export function initRadiationLab(): void {
   equation($("#eq-flux"), "Radiant flux arriving at the leaf", String.raw`q = \varepsilon\,\sigma\,T^4 \, F`);
 
   // ---- three.js scene ---------------------------------------------------------------------------
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
-  renderer.setClearColor(0x0f1311);
-  host.append(renderer.domElement);
+  // Without WebGL the 3D view is replaced by a message, but the numbers, equations and the sections
+  // that build on this one (heat paths, pyrolysis) still work.
+  let renderer: THREE.WebGLRenderer | null = null;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
+    renderer.setClearColor(0x0f1311);
+    host.append(renderer.domElement);
+  } catch (e) {
+    console.error("radiation 3D view: WebGL is not available", e);
+    host.classList.add("gl-off");
+    host.setAttribute("role", "alert");
+    host.textContent = "The 3D view needs WebGL, which this browser has turned off. The numbers beside it still update.";
+  }
+  const glEl = renderer?.domElement ?? host;
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0x0f1311, 70, 140);
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 400);
   camera.position.set(30, 13, 30);
-  const controls = new OrbitControls(camera, renderer.domElement);
+  const controls = new OrbitControls(camera, glEl);
   controls.target.set(7, 2.5, 0);
   controls.enableDamping = !reducedMotion();
   controls.maxPolarAngle = Math.PI * 0.49;
@@ -190,7 +201,7 @@ export function initRadiationLab(): void {
     };
     const band = (q: number) => BAL.filter((t) => q >= t * 1000).length;
     for (let py = 0; py < TEX; py++) for (let px = 0; px < TEX; px++) {
-      // texture v runs from y1 (top) to y0; plane is rotated so texture top = −z = +y? keep ground +y at three −z
+      // canvas row 0 is texture v = 1, which the rotated plane puts at three.js −z, i.e. physics y = y0
       const u = (px + 0.5) / TEX, v = (py + 0.5) / TEX;
       const q = sample(u, v);
       let [r, g, b] = ramp(q);
@@ -344,10 +355,10 @@ export function initRadiationLab(): void {
   // click the ground to move the leaf
   const ray = new THREE.Raycaster();
   let downAt: [number, number] | null = null;
-  renderer.domElement.addEventListener("pointerdown", (e) => { downAt = [e.clientX, e.clientY]; });
-  renderer.domElement.addEventListener("pointerup", (e) => {
+  glEl.addEventListener("pointerdown", (e) => { downAt = [e.clientX, e.clientY]; });
+  glEl.addEventListener("pointerup", (e) => {
     if (!downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 5) return;
-    const r = renderer.domElement.getBoundingClientRect();
+    const r = glEl.getBoundingClientRect();
     ray.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
     const hit = ray.intersectObject(ground)[0];
     if (!hit) return;
@@ -363,7 +374,7 @@ export function initRadiationLab(): void {
   const schedule = frameThrottle(update);
   const resize = () => {
     const w = host.clientWidth, h = host.clientHeight;
-    renderer.setSize(w, h, false);
+    renderer?.setSize(w, h, false);
     camera.aspect = w / Math.max(1, h);
     camera.updateProjectionMatrix();
     dirty = true;
@@ -372,11 +383,11 @@ export function initRadiationLab(): void {
   controls.addEventListener("change", () => { dirty = true; });
   const animate = (t: number) => {
     raf = 0;
-    if (!visible) return;
+    if (!visible || !renderer) return;
     controls.update();
     const flicker = mode === "glow" && !reducedMotion();
     if (flicker) { flameUniforms.uTime.value = t / 1000; dirty = true; }
-    if (dirty) {
+    if (dirty && renderer) {
       renderer.render(scene, camera);
       placeLabels();
       dirty = false;

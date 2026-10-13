@@ -29,7 +29,7 @@ export function headRateOfSpread(fdi: number, fuelLoadTha: number): number {
   return 0.0012 * fdi * fuelLoadTha;
 }
 
-/** McArthur slope rule of thumb: spread doubles per 10° upslope, halves per 10° downslope (upslope capped at 20°). */
+/** McArthur slope rule of thumb: spread doubles per 10° upslope and halves per 10° downslope, with slope capped at ±20°. */
 export function slopeFactor(slopeDeg: number): number {
   const s = Math.min(20, Math.max(-20, slopeDeg));
   return Math.pow(2, s / 10);

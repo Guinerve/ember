@@ -4,7 +4,7 @@ import { ffdi, ffdiCategory, headRateOfSpread, lengthToBreadth } from "../ffdi";
 import { hillshade } from "../hillshade";
 import { KILMORE_EAST } from "../reference";
 import type { SpreadInput, SpreadResult } from "../spread";
-import { loadTerrain } from "../terrain";
+import { cellAt, loadTerrain } from "../terrain";
 import { $, fmt, reducedMotion, segmented, setSlider, whenVisible } from "../ui/dom";
 import { LineChart } from "../ui/chart";
 import { equation, equationLive } from "../ui/tex";
@@ -120,7 +120,7 @@ export async function initLandscape(): Promise<void> {
     $("#timeOut").textContent = `${h} h ${String(m).padStart(2, "0")} min`;
     const ha = (burnt * cs * cs) / 10000;
     canvas.setAttribute("aria-label", `Fire map: ${fmt(ha, 0)} hectares burnt after ${Math.round(t)} minutes from ${ignitions.length} ignition point(s)`);
-    $("#stats").innerHTML = `<span>Area burnt <b>${fmt(ha, 0)} ha</b></span><span>Ignitions <b>${ignitions.length}</b></span><span>Elapsed <b>${h} h ${String(m).padStart(2, "0")}</b></span>`;
+    $("#stats").innerHTML = `<span>Area burnt <b>${fmt(ha, 0)} ha</b></span><span>Ignitions <b>${ignitions.length}</b></span><span>Elapsed <b>${h} h ${String(m).padStart(2, "0")} min</b></span>`;
     if (terrainTex) { terrainTex.needsUpdate = true; terrainDirty = true; }
   }
 
@@ -184,7 +184,7 @@ export async function initLandscape(): Promise<void> {
       ray.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
       const hit = ray.intersectObject(terrainMesh)[0];
       if (!hit?.uv) return;
-      ignitions.push({ x: Math.floor(hit.uv.x * W), y: Math.floor((1 - hit.uv.y) * H) });
+      ignitions.push(cellAt(hit.uv.x, 1 - hit.uv.y, W, H));
       recompute();
     });
   }
@@ -200,7 +200,12 @@ export async function initLandscape(): Promise<void> {
   segmented($(".map-tools .seg"), "view", (v) => {
     show3d = v === "3d";
     if (show3d && !renderer) {
-      try { build3d(); } catch { glHost.textContent = "3D view needs WebGL, which this browser has turned off."; }
+      try { build3d(); } catch (e) {
+        console.error("terrain 3D view: WebGL is not available", e);
+        glHost.classList.add("gl-off");
+        glHost.setAttribute("role", "alert");
+        glHost.textContent = "The 3D view needs WebGL, which this browser has turned off. The 2D map still works.";
+      }
     }
     glHost.hidden = !show3d;
     terrainDirty = true;
@@ -226,7 +231,7 @@ export async function initLandscape(): Promise<void> {
 
   canvas.addEventListener("click", (e) => {
     const r = canvas.getBoundingClientRect();
-    ignitions.push({ x: Math.floor(((e.clientX - r.left) / r.width) * W), y: Math.floor(((e.clientY - r.top) / r.height) * H) });
+    ignitions.push(cellAt((e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height, W, H));
     recompute();
   });
   $("#ignite-btn").addEventListener("click", () => {
@@ -237,7 +242,8 @@ export async function initLandscape(): Promise<void> {
   });
   $("#clear").addEventListener("click", () => { ignitions = []; recompute(); });
   $("#play").addEventListener("click", () => {
-    if (simT >= 360) { simT = 0; $<HTMLInputElement>("#time").value = "0"; }
+    const slider = $<HTMLInputElement>("#time");
+    if (simT >= Number(slider.max)) { simT = 0; slider.value = "0"; }
     playing = !playing; $("#play").textContent = playing ? "Pause" : "Play";
   });
   $("#time").addEventListener("input", () => { simT = val("time"); draw(); });
