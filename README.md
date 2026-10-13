@@ -6,6 +6,8 @@ An interactive model of bushfire physics. It starts with the heat that one flame
 
 **Educational model only.** Do not use it to predict a real fire or to make safety decisions. For warnings, follow your state fire service.
 
+**[Open the live model](https://guinerve.github.io/demos/ember/)**
+
 ![The landscape section: two fires spread for 2.5 hours across the Brindabella Ranges with Kilmore East weather (FFDI 106)](assets/hero-landscape.jpg)
 
 I built ember to understand why bushfires spread the way they do. Fire danger tables give a number, but they do not show the physics behind it. This page builds that physics one step at a time, from radiation to pyrolysis to a rate of spread. Then it runs McArthur's Mk5 forest model over a real elevation grid of the Brindabella Ranges. The last section compares every model with the measured spread of the Black Saturday Kilmore East fire.
